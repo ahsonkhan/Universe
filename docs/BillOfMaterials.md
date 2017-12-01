@@ -9,51 +9,34 @@ A new bill of materials is generated on each build and placed in `artifacts/bom.
 
 In addition, this bill of materials can be produced without building the repo by running `build.ps1 -bom`.
 
+## Configuration data
+
+:x: The bom SHOULD NOT contain data that is for configuration. Configuration data is any kind of parameter that a consumer needs to find the artifact.
+
+Examples of ephemeral data:
+
+ - File paths
+ - Download links
+ - Passwords
+
 ## Format
 
 The bill of materials is an XML file. Here is a minimal example of a bom.
 
 ```xml
-<Build Id="(commithash)+Release+Signed+123" Created="12/1/2017 5:10:06 PM +00:00">
+<Build>
 
-    <Artifacts Category="ship">
-        <Artifact Id="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
-            ShouldBeSigned="true"
-            PackageId="Microsoft.Extensions.DependencyInjection"
-            Version="2.0.0-rtm-123" />
-        <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
-            ShouldBeSigned="true"
-            PackageId="Microsoft.AspNetCore"
-            Version="2.0.0-rtm-123" />
-        <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.symbols.nupkg" Type="NuGetSymbolsPackage"
-            ShouldBeSigned="true"
-            PackageId="Microsoft.AspNetCore"
-            Version="2.0.0-rtm-123" />
-        <Artifact Id="aspnetcore-store-2.0.0-rtm-123-win-x64.zip" Type="ZipArchive"
-            ShouldBeSigned="false"
-            RuntimeIdentifier="win-x64"
-            Version="2.0.0-rtm-123" />
-        <Artifact Id="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Type="DebianPackage"
-            ShouldBeSigned="false"
-            RuntimeIdentifier="linux-x64"
-            Version="2.0.0-rtm-123" />
+    <Artifacts>
+        <Artifact Id="Microsoft.Extensions.Configuration.Json.2.0.0.nupkg" Type="NuGetPackage" />
     </Artifacts>
 
     <Artifacts Category="noship">
-        <Artifact Id="Experimental.1.0.0-alpha.123.nupkg" Type="NuGetPackage"
-            PackageId="Experimental"
-            Version="1.0.0-alpha.123+commithash:123456" />
-        <Artifact Id="Microsoft.AspNetCore.Tests.zip" Type="TestBundle"
-            RuntimeFramework="netcoreapp2.0"
-            RuntimeFrameworkVersion="2.0.3" />
+        <Artifact Id="Experimental.1.0.0-alpha.123.nupkg" Type="NuGetPackage" />
     </Artifacts>
 
     <Dependencies>
-        <Link Source="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" Target="Microsoft.Extensions.Common.2.0.0.nupkg" />
-        <Link Source="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Target="Newtonsoft.Json.9.0.1.nupkg" />
-        <Link Source="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Target="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" />
-        <Link Source="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Target="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" />
-        <Link Source="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Target="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" />
+        <Link Source="Microsoft.Extensions.Configuration.Json.2.0.0-rtm-123.nupkg" Target="Newtonsoft.Json.10.0.1.nupkg" />
+        <Link Id="Experimental.1.0.0-alpha.123.nupkg" Target="Microsoft.Extensions.Configuration.Json.2.0.0-rtm-123.nupkg" />
     </Dependencies>
 
 </Build>
@@ -123,7 +106,65 @@ These are common categories for artifacts used in aspnet/Universe.
   - shipoob - used for files that will be distributed in other mechanism.
   - noship - these files should not be published to partner teams or released publically. This may include test artifacts.
 
-## Example usage: signing
+## A more complete example
+
+```xml
+<Build Id="(commithash)+Release+Signed+123" Created="12/1/2017 5:10:06 PM +00:00">
+
+    <Artifacts Category="ship">
+        <Artifact Id="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
+            ShouldBeSigned="true"
+            PackageId="Microsoft.Extensions.DependencyInjection"
+            Version="2.0.0-rtm-123"
+            BranchName="release/2.0.0"
+            CommitHash="xyz123"
+            RepositoryUrl="https://github.com/aspnet/DependencyInjection"
+            FileHash="ABCDEF0123456789" />
+        <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
+            ShouldBeSigned="true"
+            PackageId="Microsoft.AspNetCore"
+            Version="2.0.0-rtm-123" />
+        <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.symbols.nupkg" Type="NuGetSymbolsPackage"
+            ShouldBeSigned="true"
+            PackageId="Microsoft.AspNetCore"
+            Version="2.0.0-rtm-123" />
+        <Artifact Id="aspnetcore-store-2.0.0-rtm-123-win-x64.zip" Type="ZipArchive"
+            ShouldBeSigned="false"
+            RuntimeIdentifier="win-x64"
+            Version="2.0.0-rtm-123" />
+        <Artifact Id="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Type="DebianPackage"
+            ShouldBeSigned="false"
+            RuntimeIdentifier="linux-x64"
+            Version="2.0.0-rtm-123" />
+    </Artifacts>
+
+    <Artifacts Category="noship">
+        <Artifact Id="Experimental.1.0.0-alpha.123.nupkg" Type="NuGetPackage"
+            PackageId="Experimental"
+            Version="1.0.0-alpha.123+commithash:123456" />
+        <Artifact Id="Microsoft.AspNetCore.Tests.zip" Type="TestBundle"
+            RuntimeFramework="netcoreapp2.0"
+            RuntimeFrameworkVersion="2.0.3" />
+    </Artifacts>
+
+    <Dependencies>
+        <Link Source="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" Target="Microsoft.Extensions.Common.2.0.0.nupkg" />
+        <Link Source="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Target="Newtonsoft.Json.9.0.1.nupkg" />
+        <Link Source="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Target="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" />
+        <Link Source="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Target="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" />
+        <Link Source="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Target="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" />
+    </Dependencies>
+
+</Build>
+```
+
+### Example usage: signing
 
 In the example above, some of the `<Artifact>` items were marked `ShouldBeSigned="true"`. Our signing tool could use this as a way to
 determine which files should be passed on to signing.
+
+### Example usage: metadata
+
+In the example above, some of the artifacts could contain data like FileHash, CommitHash, RepositoryUrl, BranchName, and others.
+It is up to the consumer of the bom to define how to interpret and use this.
+
