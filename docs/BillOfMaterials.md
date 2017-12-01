@@ -18,23 +18,23 @@ The bill of materials is an XML file. Here is a minimal example of a bom.
 
     <Artifacts Category="ship">
         <Artifact Id="Microsoft.Extensions.DependencyInjection.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
-            Signed="true"
+            ShouldBeSigned="true"
             PackageId="Microsoft.Extensions.DependencyInjection"
             Version="2.0.0-rtm-123" />
         <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.nupkg" Type="NuGetPackage"
-            Signed="true"
+            ShouldBeSigned="true"
             PackageId="Microsoft.AspNetCore"
             Version="2.0.0-rtm-123" />
         <Artifact Id="Microsoft.AspNetCore.2.0.0-rtm-123.symbols.nupkg" Type="NuGetSymbolsPackage"
-            Signed="true"
+            ShouldBeSigned="true"
             PackageId="Microsoft.AspNetCore"
             Version="2.0.0-rtm-123" />
         <Artifact Id="aspnetcore-store-2.0.0-rtm-123-win-x64.zip" Type="ZipArchive"
-            Signed="true"
+            ShouldBeSigned="false"
             RuntimeIdentifier="win-x64"
             Version="2.0.0-rtm-123" />
         <Artifact Id="aspnetcore-store-2.0.0-rtm-123-linux-x64.deb" Type="DebianPackage"
-            Signed="false"
+            ShouldBeSigned="false"
             RuntimeIdentifier="linux-x64"
             Version="2.0.0-rtm-123" />
     </Artifacts>
@@ -100,7 +100,7 @@ Requried attributes
   - `Target` - the thing it depends on. This artifact MAY OR MAY NOT be described in this `<Build>`.
     It might have been produced in a previous build or be produced by a partner team.
 
-### Artifact types
+## Artifact types
 
 These are some common artifact types produced by the build.
 
@@ -113,7 +113,7 @@ These are some common artifact types produced by the build.
   - TextFile
   - TestBundle
 
-### Artifact categories
+## Artifact categories
 
 Tools may use the category information to define how they handle different files.
 
@@ -122,3 +122,8 @@ These are common categories for artifacts used in aspnet/Universe.
   - ship - used for files that will be published to NuGet.org, microsoft.com, or other official publication locations
   - shipoob - used for files that will be distributed in other mechanism.
   - noship - these files should not be published to partner teams or released publically. This may include test artifacts.
+
+## Example usage: signing
+
+In the example above, some of the `<Artifact>` items were marked `ShouldBeSigned="true"`. Our signing tool could use this as a way to
+determine which files should be passed on to signing.
