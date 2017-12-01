@@ -66,28 +66,28 @@ The bill of materials is an XML file. Here is a minimal example of a bom.
 Describes the build output. The root element of the document.
 
 Optional attributes:
-    - `Id` - a unique identifier describing this build.
-    - `Created` - a timestamp of when the build was created.
+  - `Id` - a unique identifier describing this build.
+  - `Created` - a timestamp of when the build was created.
 
 #### `<Artifacts>`
 
 Describes a group of artifacts
 
 Optional attributes:
-    - `Category` - an arbitrary category name.
+  - `Category` - an arbitrary category name.
 
 #### `<Artifact>`
 
 Describes a file produced by the build.
 
 Required attributes:
-    - `Id` - the file name of the artifact. Id MUST BE unique per each bill of materials.
-    - `Type` - an arbitrary string describing the semantic type of the artifact.
+  - `Id` - the file name of the artifact. Id MUST BE unique per each bill of materials.
+  - `Type` - an arbitrary string describing the semantic type of the artifact.
 
 Optional attributes:
     - Others - any other attributes on the element are considered metadata values about the artifact.
 
-### `<Dependencies>`
+#### `<Dependencies>`
 
 Describes artifact dependencies.
 
@@ -96,22 +96,22 @@ Describes artifact dependencies.
 Describes a dependency between two artifacts.
 
 Requried attributes
-    - `Source` - the artifact that has a dependency. This artifact MUST BE defined by an `<Artifact>` in the same `<Build>`
-    - `Target` - the thing it depends on. This artifact MAY OR MAY NOT be described in this `<Build>`.
-        It might have been produced in a previous build or be produced by a partner team.
+  - `Source` - the artifact that has a dependency. This artifact MUST BE defined by an `<Artifact>` in the same `<Build>`
+  - `Target` - the thing it depends on. This artifact MAY OR MAY NOT be described in this `<Build>`.
+    It might have been produced in a previous build or be produced by a partner team.
 
 ### Artifact types
 
 These are some common artifact types produced by the build.
 
-    - NuGetPackage
-    - NuGetSymbolsPackage
-    - DebianPackage
-    - RedhatPackage
-    - ZipArchive
-    - TarGzArchive
-    - TextFile
-    - TestBundle
+  - NuGetPackage
+  - NuGetSymbolsPackage
+  - DebianPackage
+  - RedhatPackage
+  - ZipArchive
+  - TarGzArchive
+  - TextFile
+  - TestBundle
 
 ### Artifact categories
 
@@ -119,6 +119,6 @@ Tools may use the category information to define how they handle different files
 
 These are common categories for artifacts used in aspnet/Universe.
 
-    - ship - used for files that will be published to NuGet.org, microsoft.com, or other official publication locations
-    - shipoob - used for files that will be distributed in other mechanism.
-    - noship - these files should not be published to partner teams or released publically. This may include test artifacts.
+  - ship - used for files that will be published to NuGet.org, microsoft.com, or other official publication locations
+  - shipoob - used for files that will be distributed in other mechanism.
+  - noship - these files should not be published to partner teams or released publically. This may include test artifacts.
